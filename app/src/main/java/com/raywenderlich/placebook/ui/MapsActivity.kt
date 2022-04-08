@@ -28,7 +28,7 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.placebook
+package com.raywenderlich.placebook.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -52,6 +52,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.raywenderlich.placebook.R
 import com.raywenderlich.placebook.adapter.BookmarkInfoWindowAdapter
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -60,6 +61,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
   private lateinit var placesClient: PlacesClient
   private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+  // Gets the map set up when created
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_maps)
@@ -72,6 +74,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     setupPlacesClient()
   }
 
+  // Gets map ready to be used
   override fun onMapReady(googleMap: GoogleMap) {
     map = googleMap
     map.setInfoWindowAdapter(BookmarkInfoWindowAdapter(this))
@@ -81,11 +84,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
   }
 
+  //
   private fun setupPlacesClient() {
     Places.initialize(applicationContext, getString(R.string.google_maps_key))
     placesClient = Places.createClient(this)
   }
 
+  // Gets information about the places of interest
   private fun displayPoi(pointOfInterest: PointOfInterest) {
     displayPoiGetPlaceStep(pointOfInterest)
   }
@@ -112,7 +117,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }.addOnFailureListener { exception ->
       if (exception is ApiException) {
         val statusCode = exception.statusCode
-        Log.e(TAG,
+        Log.e(
+          TAG,
             "Place not found: " +
                 exception.message + ", " +
                 "statusCode: " + statusCode)
@@ -120,6 +126,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
   }
 
+  // Displays the photos for the points of interest
   private fun displayPoiGetPhotoStep(place: Place) {
     val photoMetadata = place.photoMetadatas?.get(0)
     if (photoMetadata == null) {
@@ -141,6 +148,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
   }
 
+  // Displays a place marker to the points of interest
   private fun displayPoiDisplayStep(place: Place, photo: Bitmap?) {
     val marker = map.addMarker(MarkerOptions()
         .position(place.latLng as LatLng)
@@ -150,6 +158,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     marker?.tag = photo
   }
 
+  //
   override fun onRequestPermissionsResult(requestCode: Int,
                                           permissions: Array<String>,
                                           grantResults: IntArray) {
@@ -162,6 +171,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
   }
 
+  //
   private fun setupLocationClient() {
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
   }
@@ -188,10 +198,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
   }
 
+  //
   private fun requestLocationPermissions() {
     ActivityCompat.requestPermissions(this,
         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-        REQUEST_LOCATION)
+        REQUEST_LOCATION
+    )
   }
 
   companion object {
